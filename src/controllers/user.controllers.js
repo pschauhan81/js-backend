@@ -1,9 +1,9 @@
 import {asyncHandler} from '../utils/asyncHandler.js';
-import {ApiError} from '../utils/apiError.js';
+import {ApiError} from '../utils/ApiError.js';
 import { User} from "../models/user.model.js"
 import {uploadOnCloudinary} from '../utils/cloudinary.js';
 import { ApiResponse } from '../utils/ApiResponse.js';
-
+import jwt from "jsonwebtoken"  
 
 const generateAccessandRefreshTokens = async(userId) => {
     try {
@@ -70,11 +70,11 @@ const registerUser = asyncHandler(async (req, res) =>{
         throw new ApiError(400, "avatar file is required");
     }
 
-    const user = await User.create({
+       const user = await User.create({
         fullName,
-        avatar:avatar.url,
-        coverImage:coverImage?.url || "",
-        email,
+        avatar: avatar.url,
+        coverImage: coverImage?.url || "",
+        email, 
         password,
         username: username.toLowerCase()
     })
@@ -98,18 +98,21 @@ const loginUser = asyncHandler(async (req, res) => {
     // if password is correct, generate access token and refresh token
     //send cookie
 
-    const {email , username, password} = req.body;
+     const {email, username, password} = req.body
+    console.log(email);
 
-    if(!email || !username){
-        throw new ApiError(400, "Email or username is required");
+    if (!username && !email) {
+        throw new ApiError(400, "username or email is required")
     }
 
     const user = await User.findOne({
-        $or:[{username},{email}]
+        $or: [{ username }, { email }]
     })
+    console.log("User from DB:", user);
 
-    if(!user){
-        throw new ApiError(404, "User not found");
+
+    if (!user) {
+        throw new ApiError(404, "user  does not exist")
     }
 
     const isPasswordValid = await user.isPasswordCorrect(password);
@@ -179,6 +182,4 @@ export {
     registerUser ,
     loginUser,
     logoutUser};
-
-
 
