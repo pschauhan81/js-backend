@@ -12,7 +12,7 @@ const generateAccessandRefreshTokens = async(userId) => {
         const refreshToken = user.generateRefreshToken()
 
         user.refreshToken = refreshToken;
-        await user.save(validateBeforeSave = false);
+        await user.save({validateBeforeSave : false});
 
         return { accessToken, refreshToken };
 
@@ -115,11 +115,12 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new ApiError(404, "user  does not exist")
     }
 
-    const isPasswordValid = await user.isPasswordCorrect(password);
+    const isPasswordValid = await user.isPasswordCorrect(password)
 
-    if(!isPasswordValid){
-        throw new ApiError(401, "Invalid  password");
+    if (!isPasswordValid) {
+    throw new ApiError(401, "Invalid user credentials")
     }
+
 
     const { accessToken, refreshToken } = await generateAccessandRefreshTokens(user._id);
 
@@ -175,6 +176,14 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(
         new ApiResponse(200, null, "User logged out successfully")
     );
+})
+
+const refreshAccessToken  = asyncHandler(async (req, res) => {
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
+    if (!incomingRefreshToken) {
+        throw new ApiError(401, "Refresh token is required");
+    }
+    
 })
 
 export {
