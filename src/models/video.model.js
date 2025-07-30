@@ -3,17 +3,17 @@ import mongoosePaginate from "mongoose-paginate-v2";
 
 const videoSchema = new Schema(
   {
-    videoFile:{
-        type: String, // Cloudinary URL for the video file
-        required: true
+    videoFile: {
+      type: String, // Cloudinary URL for the video file
+      required: true,
     },
     thumbnail: {
-        type: String, // Cloudinary URL for the thumbnail image
-        required: true
+      type: String, // Cloudinary URL for the thumbnail image
+      required: true,
     },
-    thumbnail:{
-        type: String, // Cloudinary URL for the thumbnail image
-        required: true
+    thumbnail: {
+      type: String, // Cloudinary URL for the thumbnail image
+      required: true,
     },
     title: {
       type: String,
@@ -24,23 +24,21 @@ const videoSchema = new Schema(
       required: true,
     },
     duration: {
-        type:Number,
-        required:true
+      type: Number,
+      required: true,
     },
     views: {
       type: Number,
       default: 0,
     },
-    isPublished:{
-        type:Boolean,
-        default:false   
+    isPublished: {
+      type: Boolean,
+      default: false,
     },
-    onwer:{
-        type:Schema.Types.ObjectId,
-        ref: 'User',
-    }
-
-
+    onwer: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   {
     timestamps: true,
@@ -48,6 +46,5 @@ const videoSchema = new Schema(
 );
 
 videoSchema.plugin(mongoosePaginate);
-
 
 export const Video = mongoose.model("Video", videoSchema);
