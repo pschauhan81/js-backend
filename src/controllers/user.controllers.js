@@ -364,10 +364,25 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
       $lookup: {
         from: "subscriptions",
         localField: "_id",
-        foreignField: "channel",
-        as: "subscribers",
+        foreignField: "subscriber",
+        as: "subscribedTo",
       },
     },
+    {
+      $addFields:{
+        subscribersCount:{
+          $size:"$subscribers"
+        },
+        channelsSubscribedToCount:{
+          $size:"$subscribedTo"
+        },
+        isSubscribed:{
+          $cond:{
+            if:{$in:[req.user?._id , "$subscribers.subscribers"]}
+          }
+        }
+      }
+    }
   ]);
 });
 
